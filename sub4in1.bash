@@ -12,7 +12,7 @@ findomain --target "$domain" --unique-output findomain.txt
 
 sleep 1
 # استخراج النطاقات الفرعية باستخدام github-subdomains.py
-echo -e "\e[32;5mgithub-sub============================================================================>\e[0m"
+echo -e "\e[32;5msublist3r============================================================================>\e[0m"
 
 
 sublist3r -d "$domain" -o sublist3r.txt
