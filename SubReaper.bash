@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Banner
 echo "
 ⠀⠀⠀⠀⠀⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⣰⡾⠛⠛⠉⠻⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -18,7 +19,7 @@ echo "
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠛⠀⠀⠀⠈⠛⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀
 "
 echo " ================================"
-echo " 	  ☠ RootKit ☠ 		"
+echo " 	  ☠ SubReaper ☠ 		"
 echo " ================================"
 echo ""
 
@@ -42,13 +43,6 @@ progress_bar() {
     fi
 }
 
-echo -n "Loading: "
-for i in {0..100..4}; do
-    progress_bar $i
-    sleep 0.1
-done
-echo -e "\n\nStarting the process...\n"
-
 # التحقق من وجود الأدوات المطلوبة
 for tool in findomain sublist3r assetfinder subfinder; do
     if ! command -v $tool &> /dev/null; then
@@ -57,19 +51,51 @@ for tool in findomain sublist3r assetfinder subfinder; do
     fi
 done
 
-# استقبال النطاق من المستخدم والتحقق من صحته
-read -p "🔎 Enter the Domain Name:" domain
-if [[ ! "$domain" =~ ^[a-zA-Z0-9.-]+$ ]]; then
-    echo "Invalid domain format. Please enter a valid domain."
+# معالجة المعاملات
+usage() {
+    echo "Usage: subreaper -d domain.com -o output.txt"
+    echo "Options:"
+    echo "  -d    Target domain (required)"
+    echo "  -o    Output file (required)"
     exit 1
+}
+
+# التحقق من المعاملات
+while getopts "d:o:" opt; do
+    case $opt in
+        d)
+            domain=$OPTARG
+            # التحقق من صحة النطاق
+            if [[ ! "$domain" =~ ^[a-zA-Z0-9.-]+$ ]]; then
+                echo "Error: Invalid domain format"
+                exit 1
+            fi
+            ;;
+        o)
+            output_file=$OPTARG
+            # استخراج مسار المجلد من مسار الملف
+            output_dir=$(dirname "$output_file")
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+# التحقق من وجود المعاملات المطلوبة
+if [ -z "$domain" ] || [ -z "$output_file" ]; then
+    usage
 fi
 
-# استقبال مسار حفظ النتائج واسم الملف
-read -p "Enter output directory (e.g., /path/to/directory):" output_dir
-read -p "Enter output file name (e.g., results.txt):" output_file
-
-# التحقق من أن المجلد موجود، إذا لم يكن موجودًا سيتم إنشاؤه
+# إنشاء المجلد إذا لم يكن موجوداً
 mkdir -p "$output_dir"
+
+echo -n "Loading: "
+for i in {0..100..4}; do
+    progress_bar $i
+    sleep 0.1
+done
+echo -e "\n\nStarting the process...\n"
 
 # تشغيل الأدوات واستخراج النطاقات الفرعية
 echo -e "\n\e[32mRunning findomain...\e[0m"
@@ -89,8 +115,7 @@ echo -e "\n\e[32mMerging and cleaning results...\e[0m"
 cat "$output_dir"/*.txt | sort -u > "$output_dir/all_subdomains.txt"
 
 # حفظ النطاقات الفريدة فقط
-unique_file="$output_dir/$output_file"
-awk '!seen[$0]++' "$output_dir/all_subdomains.txt" > "$unique_file"
+awk '!seen[$0]++' "$output_dir/all_subdomains.txt" > "$output_file"
 
 # حذف الملفات المؤقتة
 rm "$output_dir"/findomain.txt "$output_dir"/sublist3r.txt "$output_dir"/assetfinder.txt "$output_dir"/subfinder.txt
@@ -98,5 +123,5 @@ rm "$output_dir"/all_subdomains.txt
 
 # عرض الإحصائيات النهائية
 echo -e "\n\e[32mSubdomain discovery complete!\e[0m"
-echo "Results saved in: $unique_file"
-echo "Total unique subdomains found: $(wc -l < "$unique_file")"
+echo "Results saved in: $output_file"
+echo "Total unique subdomains found: $(wc -l < "$output_file")"
