@@ -1,27 +1,44 @@
 #!/bin/bash
 
 # Banner
-echo "
-⠀⠀⠀⠀⠀⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⣰⡾⠛⠛⠉⠻⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⢀⣿⠀⠀⠀⠀⠀⠈⠻⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠸⣧⡀⠀⠀⠀⠀⠀⠀⠈⠻⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠈⠻⣦⡀⠀⠀⠀⠀⠀⢸⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠈⠻⣦⣀⣀⣀⣠⣾⠷⣦⣄⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣀⣠⣤⡤⠀
-⠀⠀⠀⠀⠀⠀⠈⠛⠉⠉⠙⣷⣴⠟⠛⠛⣷⣄⠀⠀⠀⠀⢿⡟⠛⠉⠉⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣦⡾⠋⢙⣷⣄⠀⠀⢸⡇⠀⢠⡶⣶⣦⣤⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣶⡟⠉⣹⣷⣄⠘⣿⢀⣿⠁⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⡏⢀⣿⢷⣿⣾⠃⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣁⣴⠟⣿⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⣿⡿⠷⢶⣾⣿⣷⣴⠟⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣨⣿⣾⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠀⠀⠙⣷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠛⠀⠀⠀⠈⠛⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀
-"
-echo " ================================"
-echo " 	  ☠ SubReaper ☠ 		"
-echo " ================================"
-echo ""
+echo -e "\e[31m
+██████╗  ██████╗  ██████╗ ████████╗██╗  ██╗██╗████████╗
+██╔══██╗██╔═══██╗██╔═══██╗╚══██╔══╝██║ ██╔╝██║╚══██╔══╝
+██████╔╝██║   ██║██║   ██║   ██║   █████╔╝ ██║   ██║   
+██╔══██╗██║   ██║██║   ██║   ██║   ██╔═██╗ ██║   ██║   
+██║  ██║╚██████╔╝╚██████╔╝   ██║   ██║  ██╗██║   ██║   
+╚═╝  ╚═╝ ╚═════╝  ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚═╝   ╚═╝   
+\e[0m"
+echo -e "\e[31m =================================================\e[0m"
+echo -e "\e[31m ===============SubReaper v1.0====================\e[0m"
+echo -e "\e[31m =================================================\e[0m"
+
+# دالة للتحقق من وجود الأدوات
+check_tools() {
+    local missing_tools=()
+    local all_installed=true
+    
+    echo -e "\n\e[34m[*] Checking required tools...\e[0m"
+    
+    for tool in findomain sublist3r assetfinder subfinder; do
+        if ! command -v $tool &> /dev/null; then
+            echo -e "\e[31m[-] $tool is not installed\e[0m"
+            missing_tools+=($tool)
+            all_installed=false
+        else
+            echo -e "\e[32m[+] $tool is installed\e[0m"
+        fi
+    done
+    
+    if [ "$all_installed" = false ]; then
+        echo -e "\n\e[31m[!] Missing tools: ${missing_tools[*]}\e[0m"
+        echo -e "\e[33m[*] Please install the missing tools and try again\e[0m"
+        return 1
+    else
+        echo -e "\n\e[32m[✓] All required tools are installed!\e[0m"
+        return 0
+    fi
+}
 
 progress_bar() {
     local progress=$1
@@ -43,26 +60,23 @@ progress_bar() {
     fi
 }
 
-# التحقق من وجود الأدوات المطلوبة
-for tool in findomain sublist3r assetfinder subfinder; do
-    if ! command -v $tool &> /dev/null; then
-        echo "Error: $tool is not installed. Please install it and try again."
-        exit 1
-    fi
-done
-
 # معالجة المعاملات
 usage() {
-    echo "Usage: subreaper -d domain.com -o output.txt"
+    echo "Usage: subreaper [-C] -d domain.com -o output.txt"
     echo "Options:"
+    echo "  -C    Check for required tools and exit"
     echo "  -d    Target domain (required)"
     echo "  -o    Output file (required)"
     exit 1
 }
 
 # التحقق من المعاملات
-while getopts "d:o:" opt; do
+check_only=false
+while getopts "Cd:o:" opt; do
     case $opt in
+        C)
+            check_only=true
+            ;;
         d)
             domain=$OPTARG
             # التحقق من صحة النطاق
@@ -82,9 +96,20 @@ while getopts "d:o:" opt; do
     esac
 done
 
+# إذا كان المستخدم يريد فقط التحقق من الأدوات
+if [ "$check_only" = true ]; then
+    check_tools
+    exit $?
+fi
+
 # التحقق من وجود المعاملات المطلوبة
 if [ -z "$domain" ] || [ -z "$output_file" ]; then
     usage
+fi
+
+# التحقق من الأدوات قبل البدء
+if ! check_tools; then
+    exit 1
 fi
 
 # إنشاء المجلد إذا لم يكن موجوداً
